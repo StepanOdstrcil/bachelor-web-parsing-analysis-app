@@ -1,8 +1,18 @@
 # Basic libraries
 import re
+from urllib.parse import urljoin
 # Third-party libraries
 import requests
 from bs4 import BeautifulSoup
+
+
+DEFAULT_REQUEST_HEADERS = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+    'Accept-Encoding': 'none',
+    'Accept-Language': 'en-US,en;q=0.8',
+    'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) ' 'AppleWebKit/537.36 (KHTML, like Gecko) ' 'Chrome/61.0.3163.100 ' 'Safari/537.36' }
 
 
 class WebParser:
@@ -60,9 +70,28 @@ class WebParser:
         items = [t.get_text() for t in self._soup.find_all("html_element", class_=cls)]
         return tuple(items)
 
+    def get_all_links(self):
+        links = [l for l in self._get_all_links() if not l.startswith("mailto:")]
+        return tuple(links)
+
+    def get_all_emails(self):
+        links = [l for l in self._get_all_links() if l.startswith("mailto:")]
+        return tuple(links)
+
+    def get_all_following_links(self, level):
+        following_links = [self._get_all_links()]
+
+        for l in range(level):
+            pass
+
+        return following_links
+
     # -----------------
     # Private methods
     # -----------------
+
+    def _get_all_links(self):
+        return [l["href"] for l in self._soup.find_all('a', href=True) if not l["href"].startswith("#")]
 
     @staticmethod
     def _is_url_valid(url):

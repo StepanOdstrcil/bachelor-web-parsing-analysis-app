@@ -11,6 +11,9 @@ def main():
     wb.load_page(r"https://cs.wikipedia.org/wiki/Wiki")
     print(wb.get_items_by_tag("p"))
     print(wb.get_items_by_class("tocnumber"))
+    print(wb.get_all_links())
+    print(wb.get_all_emails())
+    # print(wb.get_all_following_links(2))
 
 
 # MAIN STARTUP SCRIPT
