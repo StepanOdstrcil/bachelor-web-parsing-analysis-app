@@ -1,6 +1,8 @@
 # Basic libraries
 import re
 from urllib.parse import urljoin
+# App libraries
+from AdvancedLogging.logger import Logger
 # Third-party libraries
 import requests
 from bs4 import BeautifulSoup
@@ -21,14 +23,15 @@ URL_REGEX = (r'^(?:http|ftp)s?://'  # http:// or https://
              r'(?::\d+)?'  # optional port
              r'(?:/?|[/?]\S+)$')
 
-DEFAULT_PARSER = "html.parser"
-
 
 class WebParser:
     """Class used for parsing web and its statistics"""
 
-    def __init__(self):
-        self._soup = None
+    DEFAULT_PARSER = "lxml"
+
+    def __init__(self, soup=None):
+        self._soup = soup
+        self._logger = Logger(self.__class__.__name__)
 
     # -----------------
     # Properties
@@ -45,7 +48,7 @@ class WebParser:
         :return: None
         """
         if self._is_url_valid(url):
-            if self._is_url_html(url):
+            if self._is_url_html(url, self._logger):
                 self._soup = self._get_soup_from_url(url)
             else:
                 raise Exception("Page from URL is not HTML")
@@ -74,7 +77,7 @@ class WebParser:
         :param cls: name of the class
         :return: all text in elements defined by class in parameter as tuple
         """
-        items = [t.get_text() for t in self._soup.find_all("html_element", class_=cls)]
+        items = [t.get_text() for t in self._soup.find_all(class_=cls)]
         return tuple(items)
 
     def get_all_links(self):
@@ -90,25 +93,32 @@ class WebParser:
         Gets all emails from page (href has mailto: before email)
         :return: all emails from page as list
         """
-        links = [l for l in self._get_all_links(self._soup) if l.startswith("mailto:")]
+        links = [l[7:] for l in self._get_all_links(self._soup) if l.startswith("mailto:")]
         return tuple(links)
 
     def get_all_following_links(self, level):
         """
         Gets all links defined by level. It gets all links in page. Then second level is all links from links at
         first level. Next level (third) is all links from all links at second level. Etc...
+        WARNING: It goes exponentially up!
         :param level: how deep should getting links go
         :return: list of lists of all links. Each list is level deeper. First is base page, second is all links from
         links at first level.
         """
         following_links = [self._get_all_links(self._soup)]
+        self._logger.info(f"Lvl:1/{level}|Links:1/1")
 
         for l in range(0, level - 1):
             links = following_links[l]
+
+            current_level = l + 2
+            current_link = 1
             found_links = []
             for link in links:
-                if self._is_url_valid(link) and self._is_url_html(link):
+                if self._is_url_valid(link) and self._is_url_html(link, self._logger):
                     found_links.extend(self._get_all_links_from_url(link))
+                self._logger.info(f"Lvl:{current_level}/{level}|Links:{current_link}/{len(links)}")
+                current_link += 1
 
             following_links.append(found_links)
 
@@ -124,12 +134,11 @@ class WebParser:
         return re.match(regex, url) is not None
 
     @staticmethod
-    def _is_url_html(url):
+    def _is_url_html(url, logger):
         try:
             r = requests.head(url)
         except requests.exceptions.ConnectionError as ex:
-            # TODO: LOG
-            print(f"Error: message: {ex}, url: {url}")
+            logger.exception(ex)
             return False
 
         return "text/html" in r.headers["content-type"] if "content-type" in r.headers else False
@@ -161,4 +170,4 @@ class WebParser:
         :return: BeautifulSoup class with page from URL
         """
         page = requests.get(url, headers=DEFAULT_REQUEST_HEADERS)
-        return BeautifulSoup(page.text, DEFAULT_PARSER)
+        return BeautifulSoup(page.text, WebParser.DEFAULT_PARSER)
