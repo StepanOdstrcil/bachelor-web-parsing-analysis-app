@@ -45,7 +45,6 @@ class WebParser:
         """
         Loads page from defined URL
         :param url: url to get page from
-        :return: None
         """
         if self._is_url_valid(url):
             if self._is_url_html(url, self._logger):
