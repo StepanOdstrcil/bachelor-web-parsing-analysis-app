@@ -43,7 +43,9 @@ class NLPService:
         """
         spacy_nlp = s.load("en_core_web_sm")
         spacy_doc = spacy_nlp(self._text)
-        return tuple([NamedEntity(entity.label_, entity.text) for entity in spacy_doc.ents])
+        return tuple(set([NamedEntity(entity.label_, entity.text)
+                          for entity in spacy_doc.ents
+                          if entity.label_ != "GPE"]))
 
     # GENSIM - Topic Modeling, Text summarization
 
@@ -54,11 +56,7 @@ class NLPService:
         """
         text_data = self._prepare_text_for_lda()
 
-        text_data_dictionary = gensim.corpora.Dictionary(text_data)
-        corpus = [text_data_dictionary.doc2bow(text) for text in text_data]
-
-        return Gensim(text_data_dictionary, corpus,
-                      gensim.models.ldamodel.LdaModel, gensim.summarization.summarize_corpus)
+        return Gensim(self.text, text_data)
 
     # -----------------
     # Private methods
@@ -121,6 +119,3 @@ class NLPService:
             return word
         else:
             return lemma
-
-    # def _get_word_root(self, word):
-    #     return WordNetLemmatizer().lemmatize(word)
