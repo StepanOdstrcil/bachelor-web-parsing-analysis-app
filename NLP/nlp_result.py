@@ -16,6 +16,9 @@ class NamedEntity:
         return self.__repr__().__hash__()
 
     def __eq__(self, other):
+        if type(other) != NamedEntity:
+            return False
+
         return self.__hash__() == other.__hash__()
 
 

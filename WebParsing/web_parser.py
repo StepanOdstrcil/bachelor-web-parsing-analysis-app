@@ -54,6 +54,13 @@ class WebParser:
         else:
             raise Exception("URL is not valid")
 
+    def get_all_tags(self):
+        """
+        Gets all available tags on the current page
+        :return: tuple of all available tags
+        """
+        return tuple(set([tag.name for tag in self._soup.find_all()]))
+
     def get_all_text(self):
         """
         Gets all text in loaded page
