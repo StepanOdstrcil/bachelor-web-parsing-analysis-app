@@ -1,3 +1,5 @@
+# Basic libraries
+from functools import wraps
 # App libraries
 from NLP.nlp_service import NLPService
 from WebParsing.web_parser import WebParser
@@ -6,12 +8,70 @@ from PyQt5 import QtWidgets, QtGui
 
 
 class MainForm(QtWidgets.QMainWindow):
+    # -----------------
+    # Decorators
+    # -----------------
+
+    def check_argument(fn):
+        @wraps(fn)
+        def check_argument_wrapper(self):
+            if self.argument != "":
+                return fn(self)
+
+            raise Exception("Argument není validní!")
+
+        return check_argument_wrapper
+
+    def check_url_changed(fn):
+        @wraps(fn)
+        def check_url_wrapper(self):
+            if self.is_url_new:
+                self.load_web_page()
+
+            return fn(self)
+
+        return check_url_wrapper
+
+    def check_url_valid(fn):
+        @wraps(fn)
+        def check_url_valid_wrapper(self):
+            if self.is_url_valid():
+                return fn(self)
+
+            raise Exception("Url není validní!")
+
+        return check_url_valid_wrapper
+
+    def reset_error_message(fn):
+        @wraps(fn)
+        def reset_error_message_wrapper(self):
+            self._error_label.setText("")
+            return fn(self)
+
+        return reset_error_message_wrapper
+
+    def catch_exception(fn):
+        @wraps(fn)
+        def catch_exception_wrapper(self):
+            try:
+                return fn(self)
+            except Exception as ex:
+                self._error_label.setText(ex.__str__())
+
+        return catch_exception_wrapper
+
+    # -----------------
+    # Initializations
+    # -----------------
+
     def __init__(self, **kwargs):
         super(MainForm, self).__init__(**kwargs)
 
         # Web parser and NLP service init
         self._web_parser = WebParser()
         self._nlp_service = NLPService()
+        # Init of inner properties
+        self._last_url = ""
 
         # Window initialization
         self.setWindowTitle("Parsování a analýza webových stránek")
@@ -26,11 +86,17 @@ class MainForm(QtWidgets.QMainWindow):
 
         # Set controls
         web_url_layout = QtWidgets.QVBoxLayout()
+
+        self._error_label = QtWidgets.QLabel("", self)
+        self._error_label.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        web_url_layout.addWidget(self._error_label)
+
         url_label = QtWidgets.QLabel("Adresa webové stránky", self)
         url_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
         web_url_layout.addWidget(url_label)
 
         self.url_edit = QtWidgets.QLineEdit(self)
+        self.url_edit.setText("https://cs.wikipedia.org/wiki/Hlavn%C3%AD_strana")
         self.url_edit.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         web_url_layout.addWidget(self.url_edit)
 
@@ -145,6 +211,17 @@ class MainForm(QtWidgets.QMainWindow):
 
         self.show()
 
+    def load_web_page(self):
+        if self.url != "":
+            self._web_parser.load_page(self.url)
+
+    # -----------------
+    # Public methods
+    # -----------------
+
+    def is_url_valid(self):
+        return self._web_parser.is_url_valid(self.url)
+
     # -----------------
     # Properties
     # -----------------
@@ -157,6 +234,10 @@ class MainForm(QtWidgets.QMainWindow):
     def argument(self):
         return self.argument_edit.text()
 
+    @property
+    def is_url_new(self):
+        return self.url != self._last_url
+
     # -----------------
     # Private methods
     # -----------------
@@ -168,35 +249,93 @@ class MainForm(QtWidgets.QMainWindow):
     # Event handlers
     # -----------------
 
-    def setup(self):
-        pass
+    # Common
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
     def _on_get_all_tags(self):
-        pass
+        all_tags = self._web_parser.get_all_tags()
+        self._set_result("\n".join(all_tags))
 
+    # Web parsing
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
     def _on_get_all_text(self):
-        pass
+        text = self._web_parser.get_all_text()
+        self._set_result(text)
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_argument
+    @check_url_changed
     def _on_get_items_by_tag(self):
-        pass
+        items_by_tag = self._web_parser.get_items_by_tag(self.argument)
+        self._set_result("\n".join(items_by_tag))
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_argument
+    @check_url_changed
     def _on_get_items_by_class(self):
-        pass
+        items_by_class = self._web_parser.get_items_by_tag(self.argument)
+        self._set_result("\n".join(items_by_class))
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
     def _on_get_all_links(self):
-        pass
+        links = self._web_parser.get_all_links()
+        self._set_result("\n".join(links))
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
     def _on_get_all_emails(self):
-        pass
+        emails = self._web_parser.get_all_emails()
+        self._set_result("\n".join(emails))
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_argument
+    @check_url_changed
     def _on_get_all_following_links(self):
-        pass
+        following_links = self._web_parser.get_all_following_links(int(self.argument))
+        self._set_result("\n".join(following_links))
 
+    # NLP
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
     def _on_named_entity_recognition(self):
-        pass
+        named_entity = self._nlp_service.get_named_entity_recognition()
+        self._set_result("\n".join(named_entity))
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
     def _on_wa_topic_modeling(self):
-        pass
+        gensim = self._nlp_service.get_topic_modeling_and_summarization()
+        topics = gensim.get_topics()
+        self._set_result("\n".join(topics))
 
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
     def _on_wa_text_summarization(self):
-        pass
+        gensim = self._nlp_service.get_topic_modeling_and_summarization()
+        summarization = gensim.get_summarization()
+        self._set_result(summarization)

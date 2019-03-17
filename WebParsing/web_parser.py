@@ -46,7 +46,7 @@ class WebParser:
         Loads page from defined URL
         :param url: url to get page from
         """
-        if self._is_url_valid(url):
+        if self.is_url_valid(url):
             if self._is_url_html(url, self._logger):
                 self._soup = self._get_soup_from_url(url)
             else:
@@ -121,23 +121,26 @@ class WebParser:
             current_link = 1
             found_links = []
             for link in links:
-                if self._is_url_valid(link) and self._is_url_html(link, self._logger):
+                if self.is_url_valid(link) and self._is_url_html(link, self._logger):
                     found_links.extend(self._get_all_links_from_url(link))
                 self._logger.info(f"Lvl:{current_level}/{level}|Links:{current_link}/{len(links)}")
                 current_link += 1
 
             following_links.append(found_links)
 
-        return following_links
+        return [link for links in following_links for link in links]
+
+    @staticmethod
+    def is_url_valid(url):
+        if url == "":
+            return False
+
+        regex = re.compile(URL_REGEX, re.IGNORECASE)
+        return re.match(regex, url) is not None
 
     # -----------------
     # Private methods
     # -----------------
-
-    @staticmethod
-    def _is_url_valid(url):
-        regex = re.compile(URL_REGEX, re.IGNORECASE)
-        return re.match(regex, url) is not None
 
     @staticmethod
     def _is_url_html(url, logger):
