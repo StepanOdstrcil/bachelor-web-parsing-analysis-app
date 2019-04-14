@@ -141,11 +141,15 @@ class MainForm(QtWidgets.QMainWindow):
         wp_get_items_by_tag.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wp_get_items_by_tag.clicked.connect(self._on_get_items_by_tag)
         web_parsing_layout.addWidget(wp_get_items_by_tag)
+        wp_get_items_by_tag_arg_lab = QtWidgets.QLabel("Argument: tag", self)
+        web_parsing_layout.addWidget(wp_get_items_by_tag_arg_lab)
 
         wp_get_items_by_class = QtWidgets.QPushButton("Text dle classy", self)
         wp_get_items_by_class.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wp_get_items_by_class.clicked.connect(self._on_get_items_by_class)
         web_parsing_layout.addWidget(wp_get_items_by_class)
+        wp_get_items_by_class_arg_lab = QtWidgets.QLabel("Argument: třída", self)
+        web_parsing_layout.addWidget(wp_get_items_by_class_arg_lab)
 
         wp_get_all_links = QtWidgets.QPushButton("Získat všechny odkazy", self)
         wp_get_all_links.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
@@ -161,6 +165,8 @@ class MainForm(QtWidgets.QMainWindow):
         wp_get_all_following_links.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wp_get_all_following_links.clicked.connect(self._on_get_all_following_links)
         web_parsing_layout.addWidget(wp_get_all_following_links)
+        wp_get_all_following_links_arg_lab = QtWidgets.QLabel("Argument: úroveň", self)
+        web_parsing_layout.addWidget(wp_get_all_following_links_arg_lab)
 
         # Web analysis - buttons
         web_analysis_layout = QtWidgets.QVBoxLayout()
@@ -169,6 +175,8 @@ class MainForm(QtWidgets.QMainWindow):
         web_analysis_label = QtWidgets.QLabel("Analýza webu", self)
         web_analysis_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
         web_analysis_layout.addWidget(web_analysis_label)
+        web_analysis_label_arg_lab = QtWidgets.QLabel("Argument: Výsledky", self)
+        web_analysis_layout.addWidget(web_analysis_label_arg_lab)
 
         wa_named_entity_recognition = QtWidgets.QPushButton("Named recognition", self)
         wa_named_entity_recognition.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
@@ -319,6 +327,7 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_valid
     @check_url_changed
     def _on_named_entity_recognition(self):
+        self._nlp_service.text = self.result_edit.text()
         named_entity = self._nlp_service.get_named_entity_recognition()
         self._set_result("\n".join(named_entity))
 
@@ -327,6 +336,7 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_valid
     @check_url_changed
     def _on_wa_topic_modeling(self):
+        self._nlp_service.text = self.result_edit.text()
         gensim = self._nlp_service.get_topic_modeling_and_summarization()
         topics = gensim.get_topics()
         self._set_result("\n".join(topics))
@@ -336,6 +346,7 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_valid
     @check_url_changed
     def _on_wa_text_summarization(self):
+        self._nlp_service.text = self.result_edit.text()
         gensim = self._nlp_service.get_topic_modeling_and_summarization()
         summarization = gensim.get_summarization()
         self._set_result(summarization)

@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b68b63d4-c2ec-4026-b133-e79ba3900f41" name="Default" comment="Add GUI library and create base layout of window&#10;&#10;- add all buttons&#10;- add all line texts&#10;- add all event handlers&#10;- initalize window with WebParser and NLPService classes&#10;- add &quot;get_all_tags&quot; method to WebParser class">
+    <list default="true" id="b68b63d4-c2ec-4026-b133-e79ba3900f41" name="Default" comment="Add argu">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI/App.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/App.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI/MainForm.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/MainForm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WebParsing/web_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/WebParsing/web_parser.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,7 +16,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GUI/App.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
+            <state relative-caret-position="260">
               <caret line="17" selection-start-line="17" selection-end-line="17" />
               <folding>
                 <element signature="e#18#28#0" expanded="true" />
@@ -27,14 +25,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GUI/MainForm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="311" column="55" lean-forward="true" selection-start-line="311" selection-start-column="55" selection-end-line="311" selection-end-column="55" />
+            <state relative-caret-position="475">
+              <caret line="177" column="63" selection-start-line="177" selection-start-column="63" selection-end-line="177" selection-end-column="63" />
               <folding>
                 <element signature="e#18#45#0" expanded="true" />
-                <element signature="e#1694#8351#0" />
               </folding>
             </state>
           </provider>
@@ -52,7 +49,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
+            <state relative-caret-position="300">
               <caret line="15" column="46" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="46" />
             </state>
           </provider>
@@ -61,8 +58,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NLP/nlp_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1020">
-              <caret line="58" column="17" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
+            <state relative-caret-position="291">
+              <caret line="51" column="8" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
               <folding>
                 <element signature="e#35#60#0" expanded="true" />
               </folding>
@@ -79,10 +76,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebParsing/web_parser.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
+            <state relative-caret-position="2420">
               <caret line="127" lean-forward="true" selection-start-line="127" selection-end-line="127" />
               <folding>
                 <element signature="e#18#27#0" expanded="true" />
@@ -127,8 +124,8 @@
         <option value="$PROJECT_DIR$/app.py" />
         <option value="$PROJECT_DIR$/NLP/nlp_result.py" />
         <option value="$PROJECT_DIR$/GUI/App.py" />
-        <option value="$PROJECT_DIR$/GUI/MainForm.py" />
         <option value="$PROJECT_DIR$/WebParsing/web_parser.py" />
+        <option value="$PROJECT_DIR$/GUI/MainForm.py" />
       </list>
     </option>
   </component>
@@ -144,6 +141,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -160,7 +158,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -330,7 +327,14 @@
       <option name="project" value="LOCAL" />
       <updated>1552224601336</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Make function GUI for Common and Web parsing methods (not NLP)&#10;&#10;- add decorators that check URL changed and try/except functions">
+      <created>1552819949823</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1552819949823</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -395,7 +399,8 @@
     <MESSAGE value="Add NLP Service&#10;&#10;- implement Named Entities&#10;- implement Topic modeling&#10;- implement Text summarization" />
     <MESSAGE value="Change Named Entity Recognition that excludes new lines&#10;&#10;- add set to NER" />
     <MESSAGE value="Add GUI library and create base layout of window&#10;&#10;- add all buttons&#10;- add all line texts&#10;- add all event handlers&#10;- initalize window with WebParser and NLPService classes&#10;- add &quot;get_all_tags&quot; method to WebParser class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add GUI library and create base layout of window&#10;&#10;- add all buttons&#10;- add all line texts&#10;- add all event handlers&#10;- initalize window with WebParser and NLPService classes&#10;- add &quot;get_all_tags&quot; method to WebParser class" />
+    <MESSAGE value="Make function GUI for Common and Web parsing methods (not NLP)&#10;&#10;- add decorators that check URL changed and try/except functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Make function GUI for Common and Web parsing methods (not NLP)&#10;&#10;- add decorators that check URL changed and try/except functions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -530,6 +535,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/GUI/App.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="e#18#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/GUI/HelpfulForm.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="40">
@@ -537,13 +552,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/NLP/nlp_service.py">
+    <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1020">
-          <caret line="58" column="17" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="17" />
-          <folding>
-            <element signature="e#35#60#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="300">
+          <caret line="15" column="46" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="46" />
         </state>
       </provider>
     </entry>
@@ -554,40 +566,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
+    <entry file="file://$PROJECT_DIR$/WebParsing/web_parser.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="15" column="46" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="46" />
+        <state relative-caret-position="2420">
+          <caret line="127" lean-forward="true" selection-start-line="127" selection-end-line="127" />
+          <folding>
+            <element signature="e#18#27#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GUI/App.py">
+    <entry file="file://$PROJECT_DIR$/NLP/nlp_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        <state relative-caret-position="291">
+          <caret line="51" column="8" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
           <folding>
-            <element signature="e#18#28#0" expanded="true" />
+            <element signature="e#35#60#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GUI/MainForm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="311" column="55" lean-forward="true" selection-start-line="311" selection-start-column="55" selection-end-line="311" selection-end-column="55" />
+        <state relative-caret-position="475">
+          <caret line="177" column="63" selection-start-line="177" selection-start-column="63" selection-end-line="177" selection-end-column="63" />
           <folding>
             <element signature="e#18#45#0" expanded="true" />
-            <element signature="e#1694#8351#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebParsing/web_parser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="127" lean-forward="true" selection-start-line="127" selection-end-line="127" />
-          <folding>
-            <element signature="e#18#27#0" expanded="true" />
           </folding>
         </state>
       </provider>
