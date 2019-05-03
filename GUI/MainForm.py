@@ -3,6 +3,7 @@ from functools import wraps
 # App libraries
 from NLP.nlp_service import NLPService
 from WebParsing.web_parser import WebParser
+from .NLPResultForm import NLPResultForm
 # Third-party libraries
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -180,7 +181,8 @@ class MainForm(QtWidgets.QMainWindow):
         web_analysis_label = QtWidgets.QLabel("Analýza webu", self)
         web_analysis_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
         web_analysis_layout.addWidget(web_analysis_label)
-        web_analysis_label_arg_lab = QtWidgets.QLabel("Argumenty pro všechna tlačítka: Okno s výsledky", self)
+        web_analysis_label_arg_lab = QtWidgets.QLabel("Vstup pro všechna tlačítka: 'Výsledky'\n"
+                                                      "Otevře se nové okno s NLP výsledkem", self)
         web_analysis_layout.addWidget(web_analysis_label_arg_lab)
 
         wa_named_entity_recognition = QtWidgets.QPushButton("Named recognition", self)
@@ -348,7 +350,10 @@ class MainForm(QtWidgets.QMainWindow):
     def _on_named_entity_recognition(self):
         self._nlp_service.text = self.result
         named_entities = self._nlp_service.get_named_entity_recognition()
-        self._set_result("\n".join([ne.__repr__() for ne in named_entities]))
+
+        self.named_entity_form = NLPResultForm("\n".join([ne.__repr__() for ne in named_entities]),
+                                               "Named entity recognition")
+        self.named_entity_form.show()
 
     @catch_exception
     @reset_error_message
@@ -358,7 +363,9 @@ class MainForm(QtWidgets.QMainWindow):
         self._nlp_service.text = self.result
         gensim = self._nlp_service.get_topic_modeling_and_summarization()
         topics = [f"{topic[0]} - {topic[1]}" for topic in gensim.get_topics()]
-        self._set_result("\n".join(topics))
+
+        self.topic_modeling_form = NLPResultForm("\n".join(topics), "Topic modeling")
+        self.topic_modeling_form.show()
 
     @catch_exception
     @reset_error_message
@@ -368,7 +375,9 @@ class MainForm(QtWidgets.QMainWindow):
         self._nlp_service.text = self.result
         gensim = self._nlp_service.get_topic_modeling_and_summarization()
         summarization = gensim.get_summarization()
-        self._set_result(summarization)
+
+        self.text_summarization_form = NLPResultForm(summarization, "Text summarization")
+        self.text_summarization_form.show()
 
     @catch_exception
     @reset_error_message
@@ -384,9 +393,9 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_valid
     @check_url_changed
     def _on_wa_textacy_analysis(self):
-        TEST_TEXT = "Since the so-called 'statistical revolution' in the late 1980s and mid 1990s, much Natural Language Processing research has relied heavily on machine learning. Formerly, many language-processing tasks typically involved the direct hand coding of rules, which is not in general robust to natural language variation. The machine-learning paradigm calls instead for using statistical inference to automatically learn such rules through the analysis of large corpora of typical real-world examples."
+        # TEST_TEXT = "Since the so-called 'statistical revolution' in the late 1980s and mid 1990s, much Natural Language Processing research has relied heavily on machine learning. Formerly, many language-processing tasks typically involved the direct hand coding of rules, which is not in general robust to natural language variation. The machine-learning paradigm calls instead for using statistical inference to automatically learn such rules through the analysis of large corpora of typical real-world examples."
 
-        # self._nlp_service.text = self.result
-        self._nlp_service.text = TEST_TEXT
+        self._nlp_service.text = self.result
 
-        self._set_result(self._nlp_service.get_textacy_analysis())
+        self.textacy_analysis_form = NLPResultForm(self._nlp_service.get_textacy_analysis(), "Textacy analysis")
+        self.textacy_analysis_form.show()
