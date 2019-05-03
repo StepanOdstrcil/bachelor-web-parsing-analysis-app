@@ -8,6 +8,9 @@ import gensim
 from spacy.lang.en import English
 import nltk
 from nltk.corpus import wordnet as wn
+import scattertext as st
+import textacy
+import textacy.keyterms
 from nltk.stem.wordnet import WordNetLemmatizer
 
 
@@ -46,6 +49,81 @@ class NLPService:
         return tuple(set([NamedEntity(entity.label_, entity.text)
                           for entity in spacy_doc.ents
                           if entity.label_ != "GPE"]))
+
+    def get_scatter_text_html(self):
+        """
+        Gets scatter text html used for visualization
+        :return: Html text used for visualisation
+        """
+        spacy_nlp = s.load("en_core_web_sm")
+        # convention_df = st.SampleCorpora.ConventionData2012.get_data()
+        # corpus = st.CorpusFromPandas(convention_df, category_col='party', text_col='text', nlp=spacy_nlp).build()
+        # return st.produce_scattertext_explorer(corpus, category='democrat', category_name='Democratic',
+        #                                        not_category_name='Republican', width_in_pixels=1000,
+        #                                        metadata=convention_df['speaker'])
+        return "TODO"
+
+    def get_textacy_doc(self):
+        """
+        Gets document of textacy library
+        :return: Textacy doc
+        """
+        en = textacy.load_spacy('en_core_web_sm', disable=('parser',))
+        processed_text = textacy.preprocess_text(self.text, lowercase=True, no_punct=True)
+
+        return textacy.Doc(processed_text, lang=en)
+
+    def get_textacy_analysis(self):
+        """
+        Gets basic textacy analysis from textacy doc
+        :return: String full of analysis from textacy doc
+        """
+        doc = self.get_textacy_doc()
+
+        section_delimeter = "------\n"
+        result_text = []
+
+        result_text.append("N Grams")
+        result_text.append(", ".join([str(ngram) for ngram in textacy.extract.ngrams(doc, 3, filter_stops=True,
+                                                                                     filter_punct=True,
+                                                                                     filter_nums=False)]))
+        result_text.append(section_delimeter)
+
+        result_text.append("Named entities")
+        result_text.append(", ".join([str(named_entity) for named_entity
+                                      in textacy.extract.named_entities(doc, drop_determiners=True)]))
+        result_text.append(section_delimeter)
+
+        result_text.append("Pos regex matches")
+        pattern = textacy.constants.POS_REGEX_PATTERNS['en']['NP']
+        result_text.append(", ".join([str(regex_match) for regex_match
+                                      in textacy.extract.pos_regex_matches(doc, pattern)]))
+        result_text.append(section_delimeter)
+
+        result_text.append("Key terms")
+        result_text.append("\n".join([f"{textrank[0]} - {textrank[1]}" for textrank
+                                      in textacy.keyterms.textrank(doc, normalize='lemma', n_keyterms=10)]))
+        result_text.append("\n")
+        result_text.append("\n".join([f"{sgrank[0]} - {sgrank[1]}" for sgrank
+                                      in textacy.keyterms.sgrank(doc, ngrams=(1, 2, 3, 4),
+                                                                 normalize='lower', n_keyterms=0.1)]))
+        result_text.append(section_delimeter)
+
+        # print("Basic counts and various readability statistics")
+        # result_text.append("Basic counts and various readability statistics")
+        # ts = textacy.TextStats(doc)
+        # result_text.append(f"Unique words: {ts.n_unique_words}\n"
+        #                    f"Basic counts: {ts.basic_counts}\n"
+        #                    f"Readability stats: {ts.readability_stats}")
+        # result_text.append(section_delimeter)
+
+        result_text.append("Bag of terms")
+        bot = doc.to_bag_of_terms(ngrams=(1, 2, 3), named_entities=True, weighting='count', as_strings=True)
+        result_text.append("\n".join([f"{term[0]} - {term[1]}" for term
+                                      in sorted(bot.items(), key=lambda x: x[1], reverse=True)[:15]]))
+        result_text.append(section_delimeter)
+
+        return "\n".join(result_text)
 
     # GENSIM - Topic Modeling, Text summarization
 

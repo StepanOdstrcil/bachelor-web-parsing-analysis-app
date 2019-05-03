@@ -4,10 +4,11 @@ from functools import wraps
 from NLP.nlp_service import NLPService
 from WebParsing.web_parser import WebParser
 # Third-party libraries
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 
 
 class MainForm(QtWidgets.QMainWindow):
+
     # -----------------
     # Decorators
     # -----------------
@@ -89,6 +90,7 @@ class MainForm(QtWidgets.QMainWindow):
 
         self._error_label = QtWidgets.QLabel("", self)
         self._error_label.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        self._error_label.setStyleSheet('color: red')
         web_url_layout.addWidget(self._error_label)
 
         url_label = QtWidgets.QLabel("Adresa webové stránky", self)
@@ -113,7 +115,8 @@ class MainForm(QtWidgets.QMainWindow):
 
         # Common functions - buttons
         common_buttons_layout = QtWidgets.QVBoxLayout()
-        common_buttons_layout.addStretch()
+        # common_buttons_layout.addStretch()
+        common_buttons_layout.setAlignment(QtCore.Qt.AlignTop)
 
         common_buttons_label = QtWidgets.QLabel("Obecné funkce", self)
         common_buttons_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
@@ -126,7 +129,8 @@ class MainForm(QtWidgets.QMainWindow):
 
         # Web parsing - buttons
         web_parsing_layout = QtWidgets.QVBoxLayout()
-        web_parsing_layout.addStretch()
+        # web_parsing_layout.addStretch()
+        web_parsing_layout.setAlignment(QtCore.Qt.AlignTop)
 
         web_parsing_label = QtWidgets.QLabel("Parsování webu", self)
         web_parsing_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
@@ -170,12 +174,13 @@ class MainForm(QtWidgets.QMainWindow):
 
         # Web analysis - buttons
         web_analysis_layout = QtWidgets.QVBoxLayout()
-        web_analysis_layout.addStretch()
+        # web_analysis_layout.addStretch()
+        web_analysis_layout.setAlignment(QtCore.Qt.AlignTop)
 
         web_analysis_label = QtWidgets.QLabel("Analýza webu", self)
         web_analysis_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
         web_analysis_layout.addWidget(web_analysis_label)
-        web_analysis_label_arg_lab = QtWidgets.QLabel("Argument: Výsledky", self)
+        web_analysis_label_arg_lab = QtWidgets.QLabel("Argumenty pro všechna tlačítka: Okno s výsledky", self)
         web_analysis_layout.addWidget(web_analysis_label_arg_lab)
 
         wa_named_entity_recognition = QtWidgets.QPushButton("Named recognition", self)
@@ -192,6 +197,16 @@ class MainForm(QtWidgets.QMainWindow):
         wa_text_summarization.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_text_summarization.clicked.connect(self._on_wa_text_summarization)
         web_analysis_layout.addWidget(wa_text_summarization)
+
+        wa_scatter_text = QtWidgets.QPushButton("Scatter text", self)
+        wa_scatter_text.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_scatter_text.clicked.connect(self._on_wa_scatter_text)
+        web_analysis_layout.addWidget(wa_scatter_text)
+
+        wa_textacy_doc = QtWidgets.QPushButton("Textacy analysis", self)
+        wa_textacy_doc.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_doc.clicked.connect(self._on_wa_textacy_analysis)
+        web_analysis_layout.addWidget(wa_textacy_doc)
 
         # Results
         result_layout = QtWidgets.QVBoxLayout()
@@ -241,6 +256,10 @@ class MainForm(QtWidgets.QMainWindow):
     @property
     def argument(self):
         return self.argument_edit.text()
+
+    @property
+    def result(self):
+        return self.result_edit.toPlainText()
 
     @property
     def is_url_new(self):
@@ -327,18 +346,18 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_valid
     @check_url_changed
     def _on_named_entity_recognition(self):
-        self._nlp_service.text = self.result_edit.text()
-        named_entity = self._nlp_service.get_named_entity_recognition()
-        self._set_result("\n".join(named_entity))
+        self._nlp_service.text = self.result
+        named_entities = self._nlp_service.get_named_entity_recognition()
+        self._set_result("\n".join([ne.__repr__() for ne in named_entities]))
 
     @catch_exception
     @reset_error_message
     @check_url_valid
     @check_url_changed
     def _on_wa_topic_modeling(self):
-        self._nlp_service.text = self.result_edit.text()
+        self._nlp_service.text = self.result
         gensim = self._nlp_service.get_topic_modeling_and_summarization()
-        topics = gensim.get_topics()
+        topics = [f"{topic[0]} - {topic[1]}" for topic in gensim.get_topics()]
         self._set_result("\n".join(topics))
 
     @catch_exception
@@ -346,7 +365,28 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_valid
     @check_url_changed
     def _on_wa_text_summarization(self):
-        self._nlp_service.text = self.result_edit.text()
+        self._nlp_service.text = self.result
         gensim = self._nlp_service.get_topic_modeling_and_summarization()
         summarization = gensim.get_summarization()
         self._set_result(summarization)
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
+    def _on_wa_scatter_text(self):
+        self._nlp_service.text = self.result
+        html = self._nlp_service.get_scatter_text_html()
+        open("scatter_text_result.html", 'wb').write(html.encode('utf-8'))
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
+    def _on_wa_textacy_analysis(self):
+        TEST_TEXT = "Since the so-called 'statistical revolution' in the late 1980s and mid 1990s, much Natural Language Processing research has relied heavily on machine learning. Formerly, many language-processing tasks typically involved the direct hand coding of rules, which is not in general robust to natural language variation. The machine-learning paradigm calls instead for using statistical inference to automatically learn such rules through the analysis of large corpora of typical real-world examples."
+
+        # self._nlp_service.text = self.result
+        self._nlp_service.text = TEST_TEXT
+
+        self._set_result(self._nlp_service.get_textacy_analysis())
