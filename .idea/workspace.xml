@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b68b63d4-c2ec-4026-b133-e79ba3900f41" name="Default" comment="Add NLPResult window for results from NLP Analysis">
+      <change afterPath="$PROJECT_DIR$/GUI/WordMoversForm.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI/HelpfulForm.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/NLPResultForm.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI/MainForm.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/MainForm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NLP/nlp_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/NLP/nlp_service.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +18,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GUI/App.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+            <state relative-caret-position="280">
+              <caret line="18" selection-start-line="18" selection-end-line="18" />
               <folding>
                 <element signature="e#18#28#0" expanded="true" />
               </folding>
@@ -26,11 +27,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GUI/MainForm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="382">
-              <caret line="184" column="90" selection-start-line="184" selection-start-column="90" selection-end-line="184" selection-end-column="90" />
+            <state relative-caret-position="140">
+              <caret line="91" lean-forward="true" selection-start-line="91" selection-end-line="91" />
               <folding>
                 <element signature="e#18#45#0" expanded="true" />
               </folding>
@@ -41,7 +42,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
+            <state relative-caret-position="1040">
               <caret line="52" selection-start-line="52" selection-end-line="52" />
             </state>
           </provider>
@@ -50,11 +51,32 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NLP/nlp_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="455">
-              <caret line="74" selection-start-line="74" selection-end-line="74" />
+            <state relative-caret-position="232">
+              <caret line="131" lean-forward="true" selection-start-line="131" selection-end-line="131" />
               <folding>
                 <element signature="e#35#60#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/GUI/WordMoversForm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="675">
+              <caret line="67" column="80" selection-start-line="67" selection-start-column="80" selection-end-line="67" selection-end-column="80" />
+              <folding>
+                <element signature="e#0#40#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GUI/NLPResultForm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret selection-end-line="31" />
             </state>
           </provider>
         </entry>
@@ -86,7 +108,10 @@
       <find>_is_url_html</find>
       <find>exception</find>
       <find>is_url_valid</find>
+      <find>en_core_web_sm</find>
       <find>result_edit</find>
+      <find>NLPResultForm</find>
+      <find>en_core_web_md</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -108,9 +133,10 @@
         <option value="$PROJECT_DIR$/NLP/nlp_result.py" />
         <option value="$PROJECT_DIR$/GUI/App.py" />
         <option value="$PROJECT_DIR$/WebParsing/web_parser.py" />
-        <option value="$PROJECT_DIR$/NLP/nlp_service.py" />
         <option value="$PROJECT_DIR$/GUI/NLPResultForm.py" />
         <option value="$PROJECT_DIR$/GUI/MainForm.py" />
+        <option value="$PROJECT_DIR$/NLP/nlp_service.py" />
+        <option value="$PROJECT_DIR$/GUI/WordMoversForm.py" />
       </list>
     </option>
   </component>
@@ -126,6 +152,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -147,7 +174,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -338,7 +364,14 @@
       <option name="project" value="LOCAL" />
       <updated>1556874848628</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Add NLPResult window for results from NLP Analysis">
+      <created>1556912890620</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1556912890620</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -382,7 +415,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2654388" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2654388" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.312026" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -406,7 +439,8 @@
     <MESSAGE value="Make function GUI for Common and Web parsing methods (not NLP)&#10;&#10;- add decorators that check URL changed and try/except functions" />
     <MESSAGE value="Add argument text as information for user&#10;&#10;- implement argument for WebAnalysis as Result box" />
     <MESSAGE value="Upgrade GUI&#10;&#10;- add textacy and scattertext (incoplete) analysis" />
-    <option name="LAST_COMMIT_MESSAGE" value="Upgrade GUI&#10;&#10;- add textacy and scattertext (incoplete) analysis" />
+    <MESSAGE value="Add NLPResult window for results from NLP Analysis" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add NLPResult window for results from NLP Analysis" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -562,6 +596,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib/site-packages/scattertext/CorpusFromPandas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GUI/App.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+          <folding>
+            <element signature="e#18#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1040">
+          <caret line="52" selection-start-line="52" selection-end-line="52" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/WebParsing/web_parser.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1000">
@@ -572,53 +630,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
+    <entry file="file://$PROJECT_DIR$/GUI/NLPResultForm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="52" selection-start-line="52" selection-end-line="52" />
+        <state>
+          <caret selection-end-line="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib/site-packages/scattertext/CorpusFromPandas.py">
+    <entry file="file://C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/Lib/site-packages/textacy/cache.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+        <state relative-caret-position="599">
+          <caret line="74" column="4" selection-start-line="74" selection-start-column="4" selection-end-line="74" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/NLP/nlp_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="74" selection-start-line="74" selection-end-line="74" />
+        <state relative-caret-position="232">
+          <caret line="131" lean-forward="true" selection-start-line="131" selection-end-line="131" />
           <folding>
             <element signature="e#35#60#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GUI/App.py">
+    <entry file="file://$PROJECT_DIR$/GUI/MainForm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        <state relative-caret-position="140">
+          <caret line="91" lean-forward="true" selection-start-line="91" selection-end-line="91" />
           <folding>
-            <element signature="e#18#28#0" expanded="true" />
+            <element signature="e#18#45#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GUI/NLPResultForm.py">
+    <entry file="file://$PROJECT_DIR$/GUI/WordMoversForm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GUI/MainForm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="184" column="90" selection-start-line="184" selection-start-column="90" selection-end-line="184" selection-end-column="90" />
+        <state relative-caret-position="675">
+          <caret line="67" column="80" selection-start-line="67" selection-start-column="80" selection-end-line="67" selection-end-column="80" />
           <folding>
-            <element signature="e#18#45#0" expanded="true" />
+            <element signature="e#0#40#0" expanded="true" />
           </folding>
         </state>
       </provider>

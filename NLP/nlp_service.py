@@ -12,6 +12,7 @@ import scattertext as st
 import textacy
 import textacy.keyterms
 from nltk.stem.wordnet import WordNetLemmatizer
+from textacy.similarity import word_movers
 
 
 class NLPService:
@@ -20,6 +21,8 @@ class NLPService:
     """
     def __init__(self, text=None):
         self._text = text
+
+    _WORD_MODEL_NAME = "en_core_web_sm"  # en_core_web_md
 
     # -----------------
     # Properties
@@ -44,7 +47,7 @@ class NLPService:
         Gets named entity recognition in tuple
         :return: Tuple filled with SpacyEntity class that has 'label' and its 'text'
         """
-        spacy_nlp = s.load("en_core_web_sm")
+        spacy_nlp = s.load(self._WORD_MODEL_NAME)
         spacy_doc = spacy_nlp(self._text)
         return tuple(set([NamedEntity(entity.label_, entity.text)
                           for entity in spacy_doc.ents
@@ -55,7 +58,7 @@ class NLPService:
         Gets scatter text html used for visualization
         :return: Html text used for visualisation
         """
-        spacy_nlp = s.load("en_core_web_sm")
+        spacy_nlp = s.load(self._WORD_MODEL_NAME)
         # convention_df = st.SampleCorpora.ConventionData2012.get_data()
         # corpus = st.CorpusFromPandas(convention_df, category_col='party', text_col='text', nlp=spacy_nlp).build()
         # return st.produce_scattertext_explorer(corpus, category='democrat', category_name='Democratic',
@@ -63,13 +66,15 @@ class NLPService:
         #                                        metadata=convention_df['speaker'])
         return "TODO"
 
-    def get_textacy_doc(self):
+    @staticmethod
+    def get_textacy_doc(text):
         """
         Gets document of textacy library
+        :param text: Text of which textacy doc to get
         :return: Textacy doc
         """
-        en = textacy.load_spacy('en_core_web_sm', disable=('parser',))
-        processed_text = textacy.preprocess_text(self.text, lowercase=True, no_punct=True)
+        en = textacy.load_spacy(NLPService._WORD_MODEL_NAME, disable=('parser',))
+        processed_text = textacy.preprocess_text(text, lowercase=True, no_punct=True)
 
         return textacy.Doc(processed_text, lang=en)
 
@@ -78,7 +83,7 @@ class NLPService:
         Gets basic textacy analysis from textacy doc
         :return: String full of analysis from textacy doc
         """
-        doc = self.get_textacy_doc()
+        doc = self.get_textacy_doc(self.text)
 
         section_delimeter = "------\n"
         result_text = []
@@ -124,6 +129,15 @@ class NLPService:
         result_text.append(section_delimeter)
 
         return "\n".join(result_text)
+
+    @staticmethod
+    def get_textacy_word_movers(text_1, text_2):
+        doc_1 = NLPService.get_textacy_doc(text_1)
+        doc_2 = NLPService.get_textacy_doc(text_2)
+
+        word_mover = word_movers(doc_1, doc_2, metric="cosine")
+
+        return word_mover
 
     # GENSIM - Topic Modeling, Text summarization
 

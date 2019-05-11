@@ -4,6 +4,7 @@ from functools import wraps
 from NLP.nlp_service import NLPService
 from WebParsing.web_parser import WebParser
 from .NLPResultForm import NLPResultForm
+from .WordMoversForm import WordMoversForm
 # Third-party libraries
 from PyQt5 import QtWidgets, QtGui, QtCore
 
@@ -86,14 +87,17 @@ class MainForm(QtWidgets.QMainWindow):
         form.setLayout(form_layout)
         self.setCentralWidget(form)
 
-        # Set controls
+        # ------ Set controls ------
         web_url_layout = QtWidgets.QVBoxLayout()
 
+        # Error label
         self._error_label = QtWidgets.QLabel("", self)
         self._error_label.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         self._error_label.setStyleSheet('color: red')
+        self._error_label.setWordWrap(True)
         web_url_layout.addWidget(self._error_label)
 
+        # Url + Argument
         url_label = QtWidgets.QLabel("Adresa webové stránky", self)
         url_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
         web_url_layout.addWidget(url_label)
@@ -111,7 +115,7 @@ class MainForm(QtWidgets.QMainWindow):
         self.argument_edit.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         web_url_layout.addWidget(self.argument_edit)
 
-        # --- Buttons ---
+        # -- Buttons --
         buttons_layout = QtWidgets.QHBoxLayout()
 
         # Common functions - buttons
@@ -209,6 +213,11 @@ class MainForm(QtWidgets.QMainWindow):
         wa_textacy_doc.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_textacy_doc.clicked.connect(self._on_wa_textacy_analysis)
         web_analysis_layout.addWidget(wa_textacy_doc)
+
+        wa_textacy_word_movers = QtWidgets.QPushButton("Textacy Word Movers", self)
+        wa_textacy_word_movers.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_word_movers.clicked.connect(self._on_wa_textacy_word_movers)
+        web_analysis_layout.addWidget(wa_textacy_word_movers)
 
         # Results
         result_layout = QtWidgets.QVBoxLayout()
@@ -399,3 +408,13 @@ class MainForm(QtWidgets.QMainWindow):
 
         self.textacy_analysis_form = NLPResultForm(self._nlp_service.get_textacy_analysis(), "Textacy analysis")
         self.textacy_analysis_form.show()
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
+    def _on_wa_textacy_word_movers(self):
+        # TEST_TEXT = "Since the so-called 'statistical revolution' in the late 1980s and mid 1990s, much Natural Language Processing research has relied heavily on machine learning. Formerly, many language-processing tasks typically involved the direct hand coding of rules, which is not in general robust to natural language variation. The machine-learning paradigm calls instead for using statistical inference to automatically learn such rules through the analysis of large corpora of typical real-world examples."
+
+        self.textacy_word_movers_window = WordMoversForm(self._nlp_service, self.result)
+        self.textacy_word_movers_window.show()
