@@ -22,7 +22,7 @@ class NLPService:
     def __init__(self, text=None):
         self._text = text
 
-    _WORD_MODEL_NAME = "en_core_web_sm"  # en_core_web_md
+    _WORD_MODEL_NAME = "en_core_web_md"
 
     # -----------------
     # Properties
@@ -58,7 +58,7 @@ class NLPService:
         Gets scatter text html used for visualization
         :return: Html text used for visualisation
         """
-        spacy_nlp = s.load(self._WORD_MODEL_NAME)
+        # spacy_nlp = s.load(self._WORD_MODEL_NAME)
         # convention_df = st.SampleCorpora.ConventionData2012.get_data()
         # corpus = st.CorpusFromPandas(convention_df, category_col='party', text_col='text', nlp=spacy_nlp).build()
         # return st.produce_scattertext_explorer(corpus, category='democrat', category_name='Democratic',
@@ -71,84 +71,79 @@ class NLPService:
         """
         Gets document of textacy library
         :param text: Text of which textacy doc to get
-        :return: Textacy doc
+        :return: tuple Textacy doc, Processed text
         """
-        en = textacy.load_spacy(NLPService._WORD_MODEL_NAME, disable=('parser',))
+        en = textacy.load_spacy_lang(NLPService._WORD_MODEL_NAME, disable=('parser',))
         processed_text = textacy.preprocess_text(text, lowercase=True, no_punct=True)
 
-        return textacy.Doc(processed_text, lang=en)
+        return textacy.make_spacy_doc(processed_text, lang=en), processed_text
 
-    def get_textacy_analysis(self):
-        """
-        Gets basic textacy analysis from textacy doc
-        :return: String full of analysis from textacy doc
-        """
-        doc = self.get_textacy_doc(self.text)
+    # Base Textacy analysis
 
-        section_delimeter = "------\n"
-        result_text = []
+    def get_n_grams(self):
+        doc, processed_text = self.get_textacy_doc(self.text)
 
-        result_text.append("N Grams")
-        result_text.append(", ".join([str(ngram) for ngram in textacy.extract.ngrams(doc, 3, filter_stops=True,
-                                                                                     filter_punct=True,
-                                                                                     filter_nums=False)]))
-        result_text.append(section_delimeter)
+        return ", ".join([str(ngram) for ngram
+                          in textacy.extract.ngrams(doc, 3, filter_stops=True, filter_punct=True, filter_nums=False)]),\
+               processed_text
 
-        result_text.append("Named entities")
-        result_text.append(", ".join([str(named_entity) for named_entity
-                                      in textacy.extract.named_entities(doc, drop_determiners=True)]))
-        result_text.append(section_delimeter)
+    def get_named_entity(self):
+        doc, processed_text = self.get_textacy_doc(self.text)
 
-        result_text.append("Pos regex matches")
+        return ", ".join([str(named_entity) for named_entity
+                          in textacy.extract.entities(doc, drop_determiners=True)]), processed_text
+
+    def get_key_terms(self):
+        doc, processed_text = self.get_textacy_doc(self.text)
+
+        return "\n".join([f"{textrank[0]} - {textrank[1]}" for textrank
+                          in textacy.keyterms.textrank(doc, normalize='lemma', n_keyterms=10)]), processed_text
+
+    def get_pos_regex(self):
+        doc, processed_text = self.get_textacy_doc(self.text)
         pattern = textacy.constants.POS_REGEX_PATTERNS['en']['NP']
-        result_text.append(", ".join([str(regex_match) for regex_match
-                                      in textacy.extract.pos_regex_matches(doc, pattern)]))
-        result_text.append(section_delimeter)
 
-        result_text.append("Key terms")
-        result_text.append("\n".join([f"{textrank[0]} - {textrank[1]}" for textrank
-                                      in textacy.keyterms.textrank(doc, normalize='lemma', n_keyterms=10)]))
-        result_text.append("\n")
-        result_text.append("\n".join([f"{sgrank[0]} - {sgrank[1]}" for sgrank
-                                      in textacy.keyterms.sgrank(doc, ngrams=(1, 2, 3, 4),
-                                                                 normalize='lower', n_keyterms=0.1)]))
-        result_text.append(section_delimeter)
+        return ", ".join([str(regex_match) for regex_match
+                          in textacy.extract.pos_regex_matches(doc, pattern)]) + "\n" +\
+               "\n".join([f"{sgrank[0]} - {sgrank[1]}" for sgrank in textacy.keyterms.sgrank(doc, ngrams=(1, 2, 3, 4),
+                                                                                             normalize='lower',
+                                                                                             n_keyterms=0.1)]), \
+               processed_text
 
-        # print("Basic counts and various readability statistics")
-        # result_text.append("Basic counts and various readability statistics")
-        # ts = textacy.TextStats(doc)
-        # result_text.append(f"Unique words: {ts.n_unique_words}\n"
-        #                    f"Basic counts: {ts.basic_counts}\n"
-        #                    f"Readability stats: {ts.readability_stats}")
-        # result_text.append(section_delimeter)
+    def get_bag_of_terms(self):
+        doc, processed_text = self.get_textacy_doc(self.text)
+        bot = doc._.to_bag_of_terms(ngrams=(1, 2, 3), named_entities=True, weighting='count', as_strings=True)
 
-        result_text.append("Bag of terms")
-        bot = doc.to_bag_of_terms(ngrams=(1, 2, 3), named_entities=True, weighting='count', as_strings=True)
-        result_text.append("\n".join([f"{term[0]} - {term[1]}" for term
-                                      in sorted(bot.items(), key=lambda x: x[1], reverse=True)[:15]]))
-        result_text.append(section_delimeter)
-
-        return "\n".join(result_text)
+        return "\n".join([f"{term[0]} - {term[1]}" for term
+                          in sorted(bot.items(), key=lambda x: x[1], reverse=True)[:15]]), processed_text
 
     @staticmethod
     def get_textacy_word_movers(text_1, text_2):
-        doc_1 = NLPService.get_textacy_doc(text_1)
-        doc_2 = NLPService.get_textacy_doc(text_2)
+        """
+        Gets textacy word movers number from comparing two texts.
+        Number between 0.0 to 1.0 where 0 is no similarity and 1 full similarity.
+        :param text_1: First text
+        :param text_2: Second text
+        :return: Returns tuple with result of word movers and both processed texts
+        """
+        doc_1, preprocess_text_1 = NLPService.get_textacy_doc(text_1)
+        doc_2, preprocess_text_2 = NLPService.get_textacy_doc(text_2)
 
         word_mover = word_movers(doc_1, doc_2, metric="cosine")
 
-        return word_mover
+        return word_mover, f"Zpracovaný text 1:\n{preprocess_text_1}\n\nZpracovaný text 2:\n{preprocess_text_2}"
 
     # GENSIM - Topic Modeling, Text summarization
 
     def get_topic_modeling_and_summarization(self):
         """
         Gets an class for topic modeling and text summarization methods
-        :return: Gensim class that has methods for topic modeling and text summarization
+        :return: Tuple with Gensim class that has methods for topic modeling and text summarization
+        and processed text
         """
         text_data = self._prepare_text_for_lda()
 
-        return Gensim(self.text, text_data)
+        return Gensim(self.text, text_data), "\n".join([",".join(td) for td in text_data])
 
     # -----------------
     # Private methods

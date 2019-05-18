@@ -46,7 +46,7 @@ class WordMoversForm(QtWidgets.QMdiSubWindow):
         self.text_2_edit.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         main_layout.addWidget(self.text_2_edit)
 
-        word_movers_analysis = QtWidgets.QPushButton("Word movers analysis", self)
+        word_movers_analysis = QtWidgets.QPushButton("Podobnost textu", self)
         word_movers_analysis.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         word_movers_analysis.clicked.connect(self._on_word_movers_analysis)
         main_layout.addWidget(word_movers_analysis)
@@ -58,14 +58,17 @@ class WordMoversForm(QtWidgets.QMdiSubWindow):
     def _on_word_movers_analysis(self):
         self._error_label.setText("")
 
-        if not (self.text_1_edit.toPlainText() and self.text_2_edit.toPlainText()):
+        raw_text_1, raw_text_2 = self.text_1_edit.toPlainText(), self.text_2_edit.toPlainText()
+
+        if not (raw_text_1 and raw_text_2):
             self._error_label.setText("Jeden/oba texty jsou prázdné.")
+            return
 
         try:
-            word_movers_result = self._nlp_service.get_textacy_word_movers(self.text_1_edit.toPlainText(),
-                                                                           self.text_2_edit.toPlainText())
+            word_movers, processed_text = self._nlp_service.get_textacy_word_movers(raw_text_1, raw_text_2)
+            raw_text = f"Čistý text 1:\n{raw_text_1}\n\nČistý text 2:\n{raw_text_2}"
 
-            self.word_movers_result_form = NLPResultForm(str(word_movers_result), "Word Movers Result")
+            self.word_movers_result_form = NLPResultForm(str(word_movers), raw_text, processed_text, "Podobnost textu")
             self.word_movers_result_form.show()
         except Exception as ex:
             self._error_label.setText(ex.__str__())

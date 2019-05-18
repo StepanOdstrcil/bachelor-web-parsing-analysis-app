@@ -79,13 +79,19 @@ class MainForm(QtWidgets.QMainWindow):
         # Window initialization
         self.setWindowTitle("Parsování a analýza webových stránek")
         self.setWindowIcon(QtGui.QIcon("icon.png"))
-        self.setMinimumWidth(650)
+        self.setMinimumWidth(1400)
 
         # Main widget and BoxLayout settings
         form = QtWidgets.QWidget()
-        form_layout = QtWidgets.QVBoxLayout()
+        form_layout = QtWidgets.QHBoxLayout()
         form.setLayout(form_layout)
         self.setCentralWidget(form)
+
+        left_side_layout = QtWidgets.QVBoxLayout()
+        right_side_layout = QtWidgets.QVBoxLayout()
+
+        form_layout.addLayout(left_side_layout)
+        form_layout.addLayout(right_side_layout)
 
         # ------ Set controls ------
         web_url_layout = QtWidgets.QVBoxLayout()
@@ -153,7 +159,7 @@ class MainForm(QtWidgets.QMainWindow):
         wp_get_items_by_tag_arg_lab = QtWidgets.QLabel("Argument: tag", self)
         web_parsing_layout.addWidget(wp_get_items_by_tag_arg_lab)
 
-        wp_get_items_by_class = QtWidgets.QPushButton("Text dle classy", self)
+        wp_get_items_by_class = QtWidgets.QPushButton("Text dle třídy", self)
         wp_get_items_by_class.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wp_get_items_by_class.clicked.connect(self._on_get_items_by_class)
         web_parsing_layout.addWidget(wp_get_items_by_class)
@@ -189,32 +195,52 @@ class MainForm(QtWidgets.QMainWindow):
                                                       "Otevře se nové okno s NLP výsledkem", self)
         web_analysis_layout.addWidget(web_analysis_label_arg_lab)
 
-        wa_named_entity_recognition = QtWidgets.QPushButton("Named recognition", self)
+        wa_named_entity_recognition = QtWidgets.QPushButton("Rozpoznání entit", self)
         wa_named_entity_recognition.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_named_entity_recognition.clicked.connect(self._on_named_entity_recognition)
         web_analysis_layout.addWidget(wa_named_entity_recognition)
 
-        wa_topic_modeling = QtWidgets.QPushButton("Topic modeling", self)
+        wa_topic_modeling = QtWidgets.QPushButton("Témata", self)
         wa_topic_modeling.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_topic_modeling.clicked.connect(self._on_wa_topic_modeling)
         web_analysis_layout.addWidget(wa_topic_modeling)
 
-        wa_text_summarization = QtWidgets.QPushButton("Text summarization", self)
+        wa_text_summarization = QtWidgets.QPushButton("Sumarizace textu", self)
         wa_text_summarization.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_text_summarization.clicked.connect(self._on_wa_text_summarization)
         web_analysis_layout.addWidget(wa_text_summarization)
 
-        wa_scatter_text = QtWidgets.QPushButton("Scatter text", self)
-        wa_scatter_text.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
-        wa_scatter_text.clicked.connect(self._on_wa_scatter_text)
-        web_analysis_layout.addWidget(wa_scatter_text)
+        # wa_scatter_text = QtWidgets.QPushButton("Scatter text", self)
+        # wa_scatter_text.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        # wa_scatter_text.clicked.connect(self._on_wa_scatter_text)
+        # web_analysis_layout.addWidget(wa_scatter_text)
 
-        wa_textacy_doc = QtWidgets.QPushButton("Textacy analysis", self)
-        wa_textacy_doc.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
-        wa_textacy_doc.clicked.connect(self._on_wa_textacy_analysis)
-        web_analysis_layout.addWidget(wa_textacy_doc)
+        wa_textacy_button = QtWidgets.QPushButton("N Gramy", self)
+        wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_button.clicked.connect(self._on_wa_textacy_n_grams)
+        web_analysis_layout.addWidget(wa_textacy_button)
 
-        wa_textacy_word_movers = QtWidgets.QPushButton("Textacy Word Movers", self)
+        wa_textacy_button = QtWidgets.QPushButton("Rozpoznávání entit", self)
+        wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_button.clicked.connect(self._on_wa_textacy_named_entity)
+        web_analysis_layout.addWidget(wa_textacy_button)
+
+        wa_textacy_button = QtWidgets.QPushButton("Klíčová slova", self)
+        wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_button.clicked.connect(self._on_wa_textacy_key_terms)
+        web_analysis_layout.addWidget(wa_textacy_button)
+
+        wa_textacy_button = QtWidgets.QPushButton("Analýza dle regexu", self)
+        wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_button.clicked.connect(self._on_wa_textacy_pos_regex)
+        web_analysis_layout.addWidget(wa_textacy_button)
+
+        wa_textacy_button = QtWidgets.QPushButton("Termíny", self)
+        wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_button.clicked.connect(self._on_wa_textacy_bag_of_terms)
+        web_analysis_layout.addWidget(wa_textacy_button)
+
+        wa_textacy_word_movers = QtWidgets.QPushButton("Podobnost textu s druhým", self)
         wa_textacy_word_movers.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_textacy_word_movers.clicked.connect(self._on_wa_textacy_word_movers)
         web_analysis_layout.addWidget(wa_textacy_word_movers)
@@ -222,12 +248,13 @@ class MainForm(QtWidgets.QMainWindow):
         # Results
         result_layout = QtWidgets.QVBoxLayout()
 
-        result_label = QtWidgets.QLabel("Výsledky", self)
+        result_label = QtWidgets.QLabel("Výsledky (čistý text)", self)
         result_label.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
         result_layout.addWidget(result_label)
 
         self.result_edit = QtWidgets.QTextEdit(self)
         self.result_edit.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        self.result_edit.setMinimumHeight(500)
         result_layout.addWidget(self.result_edit)
 
         # Layout set
@@ -237,11 +264,14 @@ class MainForm(QtWidgets.QMainWindow):
         buttons_layout.addLayout(web_analysis_layout)
         buttons_layout.addStretch()
 
-        form_layout.addStretch()
-        form_layout.addLayout(web_url_layout)
-        form_layout.addLayout(buttons_layout)
-        form_layout.addLayout(result_layout)
-        form_layout.addStretch()
+        left_side_layout.addStretch()
+        left_side_layout.addLayout(web_url_layout)
+        left_side_layout.addLayout(buttons_layout)
+        left_side_layout.addStretch()
+
+        right_side_layout.addStretch()
+        right_side_layout.addLayout(result_layout)
+        right_side_layout.addStretch()
 
         self.show()
 
@@ -361,7 +391,7 @@ class MainForm(QtWidgets.QMainWindow):
         named_entities = self._nlp_service.get_named_entity_recognition()
 
         self.named_entity_form = NLPResultForm("\n".join([ne.__repr__() for ne in named_entities]),
-                                               "Named entity recognition")
+                                               raw_text=self.result, header="Rozpoznání entit")
         self.named_entity_form.show()
 
     @catch_exception
@@ -370,10 +400,10 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_changed
     def _on_wa_topic_modeling(self):
         self._nlp_service.text = self.result
-        gensim = self._nlp_service.get_topic_modeling_and_summarization()
+        gensim, processed_text = self._nlp_service.get_topic_modeling_and_summarization()
         topics = [f"{topic[0]} - {topic[1]}" for topic in gensim.get_topics()]
 
-        self.topic_modeling_form = NLPResultForm("\n".join(topics), "Topic modeling")
+        self.topic_modeling_form = NLPResultForm("\n".join(topics), self.result, processed_text, "Témata")
         self.topic_modeling_form.show()
 
     @catch_exception
@@ -382,39 +412,85 @@ class MainForm(QtWidgets.QMainWindow):
     @check_url_changed
     def _on_wa_text_summarization(self):
         self._nlp_service.text = self.result
-        gensim = self._nlp_service.get_topic_modeling_and_summarization()
+        gensim, processed_text = self._nlp_service.get_topic_modeling_and_summarization()
         summarization = gensim.get_summarization()
 
-        self.text_summarization_form = NLPResultForm(summarization, "Text summarization")
+        self.text_summarization_form = NLPResultForm(summarization, self.result, processed_text, "Sumarizace textu")
         self.text_summarization_form.show()
 
-    @catch_exception
-    @reset_error_message
-    @check_url_valid
-    @check_url_changed
-    def _on_wa_scatter_text(self):
-        self._nlp_service.text = self.result
-        html = self._nlp_service.get_scatter_text_html()
-        open("scatter_text_result.html", 'wb').write(html.encode('utf-8'))
+    # @catch_exception
+    # @reset_error_message
+    # @check_url_valid
+    # @check_url_changed
+    # def _on_wa_scatter_text(self):
+    #     self._nlp_service.text = self.result
+    #     html = self._nlp_service.get_scatter_text_html()
+    #     open("scatter_text_result.html", 'wb').write(html.encode('utf-8'))
 
     @catch_exception
     @reset_error_message
     @check_url_valid
     @check_url_changed
-    def _on_wa_textacy_analysis(self):
-        # TEST_TEXT = "Since the so-called 'statistical revolution' in the late 1980s and mid 1990s, much Natural Language Processing research has relied heavily on machine learning. Formerly, many language-processing tasks typically involved the direct hand coding of rules, which is not in general robust to natural language variation. The machine-learning paradigm calls instead for using statistical inference to automatically learn such rules through the analysis of large corpora of typical real-world examples."
-
+    def _on_wa_textacy_n_grams(self):
         self._nlp_service.text = self.result
 
-        self.textacy_analysis_form = NLPResultForm(self._nlp_service.get_textacy_analysis(), "Textacy analysis")
-        self.textacy_analysis_form.show()
+        n_grams, processed_text = self._nlp_service.get_n_grams()
+
+        self.textacy_n_grams_form = NLPResultForm(n_grams, self.result, processed_text, "N Gramy")
+        self.textacy_n_grams_form.show()
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
+    def _on_wa_textacy_named_entity(self):
+        self._nlp_service.text = self.result
+
+        named_entity, processed_text = self._nlp_service.get_named_entity()
+
+        self.textacy_named_entity_form = NLPResultForm(named_entity, self.result, processed_text, "Rozpoznávání entit")
+        self.textacy_named_entity_form.show()
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
+    def _on_wa_textacy_key_terms(self):
+        self._nlp_service.text = self.result
+
+        key_terms, processed_text = self._nlp_service.get_key_terms()
+
+        self.textacy_key_terms_form = NLPResultForm(key_terms, self.result, processed_text, "Klíčová slova")
+        self.textacy_key_terms_form.show()
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
+    def _on_wa_textacy_pos_regex(self):
+        self._nlp_service.text = self.result
+
+        pos_regex, processed_text = self._nlp_service.get_pos_regex()
+
+        self.textacy_pos_regex_form = NLPResultForm(pos_regex, self.result, processed_text, "Analýza dle regexu")
+        self.textacy_pos_regex_form.show()
+
+    @catch_exception
+    @reset_error_message
+    @check_url_valid
+    @check_url_changed
+    def _on_wa_textacy_bag_of_terms(self):
+        self._nlp_service.text = self.result
+
+        bag_of_terms, processed_text = self._nlp_service.get_bag_of_terms()
+
+        self.textacy_bag_of_terms_form = NLPResultForm(bag_of_terms, self.result, processed_text, "Termíny")
+        self.textacy_bag_of_terms_form.show()
 
     @catch_exception
     @reset_error_message
     @check_url_valid
     @check_url_changed
     def _on_wa_textacy_word_movers(self):
-        # TEST_TEXT = "Since the so-called 'statistical revolution' in the late 1980s and mid 1990s, much Natural Language Processing research has relied heavily on machine learning. Formerly, many language-processing tasks typically involved the direct hand coding of rules, which is not in general robust to natural language variation. The machine-learning paradigm calls instead for using statistical inference to automatically learn such rules through the analysis of large corpora of typical real-world examples."
-
         self.textacy_word_movers_window = WordMoversForm(self._nlp_service, self.result)
         self.textacy_word_movers_window.show()
