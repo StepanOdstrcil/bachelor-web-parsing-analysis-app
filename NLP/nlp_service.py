@@ -40,6 +40,18 @@ class NLPService:
     # Public methods
     # -----------------
 
+    # GENSIM - Topic Modeling, Text summarization
+
+    def get_topic_modeling_and_summarization(self):
+        """
+        Gets an class for topic modeling and text summarization methods
+        :return: Tuple with Gensim class that has methods for topic modeling and text summarization
+        and processed text
+        """
+        text_data = self._prepare_text_for_lda()
+
+        return Gensim(self.text, text_data), "\n".join([",".join(td) for td in text_data])
+
     # SPACY - Named Entity Recognition
 
     def get_named_entity_recognition(self):
@@ -81,41 +93,60 @@ class NLPService:
     # Base Textacy analysis
 
     def get_n_grams(self):
+        """
+        Get N Grams in current text
+        :return: Tuple of (Tuple of N Grams, Processed text by this method)
+        """
         doc, processed_text = self.get_textacy_doc(self.text)
 
-        return ", ".join([str(ngram) for ngram
-                          in textacy.extract.ngrams(doc, 3, filter_stops=True, filter_punct=True, filter_nums=False)]),\
-               processed_text
+        return tuple([str(ngram) for ngram
+                      in textacy.extract.ngrams(doc, 3, filter_stops=True,
+                                                filter_punct=True, filter_nums=False)]), processed_text
 
     def get_named_entity(self):
+        """
+        Gets named entity recognition
+        :return: Tuple of (Tuple of Named entities, Processed text by this method)
+        """
         doc, processed_text = self.get_textacy_doc(self.text)
 
-        return ", ".join([str(named_entity) for named_entity
-                          in textacy.extract.entities(doc, drop_determiners=True)]), processed_text
+        return tuple([str(named_entity) for named_entity
+                      in textacy.extract.entities(doc, drop_determiners=True)]), processed_text
 
     def get_key_terms(self):
+        """
+        Gets key of terms in current text
+        :return: Tuple of (Tuple of Key Terms, Processed text by this method)
+        """
         doc, processed_text = self.get_textacy_doc(self.text)
 
-        return "\n".join([f"{textrank[0]} - {textrank[1]}" for textrank
-                          in textacy.keyterms.textrank(doc, normalize='lemma', n_keyterms=10)]), processed_text
+        return tuple([f"{textrank[0]} - {textrank[1]}" for textrank
+                      in textacy.keyterms.textrank(doc, normalize='lemma', n_keyterms=10)]), processed_text
 
     def get_pos_regex(self):
+        """
+        Gets Pos Regex matches in textacy patterns in english
+        :return: Tuple of (Tuple of Pos Regex matches, Processed text by this method)
+        """
         doc, processed_text = self.get_textacy_doc(self.text)
         pattern = textacy.constants.POS_REGEX_PATTERNS['en']['NP']
 
-        return ", ".join([str(regex_match) for regex_match
-                          in textacy.extract.pos_regex_matches(doc, pattern)]) + "\n" +\
-               "\n".join([f"{sgrank[0]} - {sgrank[1]}" for sgrank in textacy.keyterms.sgrank(doc, ngrams=(1, 2, 3, 4),
-                                                                                             normalize='lower',
-                                                                                             n_keyterms=0.1)]), \
+        return tuple([str(regex_match) for regex_match
+                      in textacy.extract.pos_regex_matches(doc, pattern)]) + ("\n",) +\
+               tuple([f"{sgrank[0]} - {sgrank[1]}" for sgrank
+                      in textacy.keyterms.sgrank(doc, ngrams=(1, 2, 3, 4), normalize='lower', n_keyterms=0.1)]),\
                processed_text
 
     def get_bag_of_terms(self):
+        """
+        Gets bag of terms in current text
+        :return: Tuple of (Tuple of Terms, Processed text by this method)
+        """
         doc, processed_text = self.get_textacy_doc(self.text)
         bot = doc._.to_bag_of_terms(ngrams=(1, 2, 3), named_entities=True, weighting='count', as_strings=True)
 
-        return "\n".join([f"{term[0]} - {term[1]}" for term
-                          in sorted(bot.items(), key=lambda x: x[1], reverse=True)[:15]]), processed_text
+        return tuple([f"{term[0]} - {term[1]}" for term
+                      in sorted(bot.items(), key=lambda x: x[1], reverse=True)[:15]]), processed_text
 
     @staticmethod
     def get_textacy_word_movers(text_1, text_2):
@@ -132,18 +163,6 @@ class NLPService:
         word_mover = word_movers(doc_1, doc_2, metric="cosine")
 
         return word_mover, f"Zpracovaný text 1:\n{preprocess_text_1}\n\nZpracovaný text 2:\n{preprocess_text_2}"
-
-    # GENSIM - Topic Modeling, Text summarization
-
-    def get_topic_modeling_and_summarization(self):
-        """
-        Gets an class for topic modeling and text summarization methods
-        :return: Tuple with Gensim class that has methods for topic modeling and text summarization
-        and processed text
-        """
-        text_data = self._prepare_text_for_lda()
-
-        return Gensim(self.text, text_data), "\n".join([",".join(td) for td in text_data])
 
     # -----------------
     # Private methods

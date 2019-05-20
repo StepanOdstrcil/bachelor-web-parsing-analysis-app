@@ -195,10 +195,15 @@ class MainForm(QtWidgets.QMainWindow):
                                                       "Otevře se nové okno s NLP výsledkem", self)
         web_analysis_layout.addWidget(web_analysis_label_arg_lab)
 
-        wa_named_entity_recognition = QtWidgets.QPushButton("Rozpoznání entit", self)
+        wa_named_entity_recognition = QtWidgets.QPushButton("Rozpoznání entit (1)", self)
         wa_named_entity_recognition.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_named_entity_recognition.clicked.connect(self._on_named_entity_recognition)
         web_analysis_layout.addWidget(wa_named_entity_recognition)
+
+        wa_textacy_button = QtWidgets.QPushButton("Rozpoznání entit (2)", self)
+        wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        wa_textacy_button.clicked.connect(self._on_wa_textacy_named_entity)
+        web_analysis_layout.addWidget(wa_textacy_button)
 
         wa_topic_modeling = QtWidgets.QPushButton("Témata", self)
         wa_topic_modeling.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
@@ -218,11 +223,6 @@ class MainForm(QtWidgets.QMainWindow):
         wa_textacy_button = QtWidgets.QPushButton("N Gramy", self)
         wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_textacy_button.clicked.connect(self._on_wa_textacy_n_grams)
-        web_analysis_layout.addWidget(wa_textacy_button)
-
-        wa_textacy_button = QtWidgets.QPushButton("Rozpoznávání entit", self)
-        wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
-        wa_textacy_button.clicked.connect(self._on_wa_textacy_named_entity)
         web_analysis_layout.addWidget(wa_textacy_button)
 
         wa_textacy_button = QtWidgets.QPushButton("Klíčová slova", self)
@@ -436,7 +436,7 @@ class MainForm(QtWidgets.QMainWindow):
 
         n_grams, processed_text = self._nlp_service.get_n_grams()
 
-        self.textacy_n_grams_form = NLPResultForm(n_grams, self.result, processed_text, "N Gramy")
+        self.textacy_n_grams_form = NLPResultForm("\n".join(n_grams), self.result, processed_text, "N Gramy")
         self.textacy_n_grams_form.show()
 
     @catch_exception
@@ -448,7 +448,8 @@ class MainForm(QtWidgets.QMainWindow):
 
         named_entity, processed_text = self._nlp_service.get_named_entity()
 
-        self.textacy_named_entity_form = NLPResultForm(named_entity, self.result, processed_text, "Rozpoznávání entit")
+        self.textacy_named_entity_form = NLPResultForm("\n".join(named_entity),
+                                                       self.result, processed_text, "Rozpoznávání entit")
         self.textacy_named_entity_form.show()
 
     @catch_exception
@@ -460,7 +461,7 @@ class MainForm(QtWidgets.QMainWindow):
 
         key_terms, processed_text = self._nlp_service.get_key_terms()
 
-        self.textacy_key_terms_form = NLPResultForm(key_terms, self.result, processed_text, "Klíčová slova")
+        self.textacy_key_terms_form = NLPResultForm("\n".join(key_terms), self.result, processed_text, "Klíčová slova")
         self.textacy_key_terms_form.show()
 
     @catch_exception
@@ -472,7 +473,8 @@ class MainForm(QtWidgets.QMainWindow):
 
         pos_regex, processed_text = self._nlp_service.get_pos_regex()
 
-        self.textacy_pos_regex_form = NLPResultForm(pos_regex, self.result, processed_text, "Analýza dle regexu")
+        self.textacy_pos_regex_form = NLPResultForm("\n".join(pos_regex),
+                                                    self.result, processed_text, "Analýza dle regexu")
         self.textacy_pos_regex_form.show()
 
     @catch_exception
@@ -484,7 +486,7 @@ class MainForm(QtWidgets.QMainWindow):
 
         bag_of_terms, processed_text = self._nlp_service.get_bag_of_terms()
 
-        self.textacy_bag_of_terms_form = NLPResultForm(bag_of_terms, self.result, processed_text, "Termíny")
+        self.textacy_bag_of_terms_form = NLPResultForm("\n".join(bag_of_terms), self.result, processed_text, "Termíny")
         self.textacy_bag_of_terms_form.show()
 
     @catch_exception
