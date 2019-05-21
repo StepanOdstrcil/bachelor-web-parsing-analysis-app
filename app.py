@@ -1,49 +1,3 @@
-# # Basic libraries
-#
-# # App libraries
-# from WebParsing.web_parser import WebParser
-# from NLP.nlp_service import NLPService
-# # Third-party libraries
-#
-#
-# # MAIN CODE
-# def main():
-#     # PARSING
-#
-#     # wb = WebParser()
-#     # wb.load_page(r"https://cs.wikipedia.org/wiki/Wiki")
-#     # print(wb.get_items_by_tag("h2"))
-#     # print(wb.get_items_by_class("tocnumber"))
-#     # print(wb.get_all_links())
-#     # print(wb.get_all_emails())
-#     # print(wb.get_all_following_links(2))
-#
-#     # NLP
-#
-#     wb = WebParser()
-#     wb.load_page(r"https://en.wikipedia.org/wiki/Wiki")
-#     text = wb.get_items_by_tag("p")[14]
-#
-#     print(text)
-#     print("----")
-#
-#     nlp_service = NLPService(text)
-#
-#     named_entities = nlp_service.get_named_entity_recognition()
-#     print("\nNamed entities:")
-#     print(named_entities)
-#
-#     gensim = nlp_service.get_topic_modeling_and_summarization()
-#     print("\nTopic modeling:")
-#     print(gensim.get_topics())
-#     print("\nText summarization:")
-#     print(gensim.get_summarization())
-#
-#
-# # MAIN STARTUP SCRIPT
-# if __name__ == "__main__":
-#     main()
-
 # Basic libraries
 
 # App libraries
@@ -60,3 +14,9 @@ def main():
 # MAIN STARTUP SCRIPT
 if __name__ == "__main__":
     main()
+    # TEST_TEXT_1 = 'An back office handling all agregated data should be available for the customers of vehicle certificate service. These data must be available through a secured access.'
+    # TEST_TEXT_2 = 'If you are a resident of the european economic area (eea) you have certain rights and protections under the gdpr regarding the processing of your personal data. '
+
+    # nlp_s = NLPService()
+    # print(nlp_s.get_word_movers(TEST_TEXT_1, TEST_TEXT_2))
+    # nlp_s.show_word_movers_plot(TEST_TEXT_1, TEST_TEXT_2)

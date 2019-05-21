@@ -11,8 +11,15 @@ from nltk.corpus import wordnet as wn
 import scattertext as st
 import textacy
 import textacy.keyterms
+from sklearn.metrics import pairwise_distances
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pyemd import emd
+from sklearn.manifold import MDS
+import collections
 from nltk.stem.wordnet import WordNetLemmatizer
-from textacy.similarity import word_movers
+from textacy.similarity import word_movers, extract, compat
 
 
 class NLPService:
@@ -23,6 +30,7 @@ class NLPService:
         self._text = text
 
     _WORD_MODEL_NAME = "en_core_web_md"
+    COLORING = ('b', 'r', 'g', 'k', 'y')
 
     # -----------------
     # Properties
@@ -149,7 +157,7 @@ class NLPService:
                       in sorted(bot.items(), key=lambda x: x[1], reverse=True)[:15]]), processed_text
 
     @staticmethod
-    def get_textacy_word_movers(text_1, text_2):
+    def get_word_movers(text_1, text_2):
         """
         Gets textacy word movers number from comparing two texts.
         Number between 0.0 to 1.0 where 0 is no similarity and 1 full similarity.
@@ -163,6 +171,90 @@ class NLPService:
         word_mover = word_movers(doc_1, doc_2, metric="cosine")
 
         return word_mover, f"Zpracovaný text 1:\n{preprocess_text_1}\n\nZpracovaný text 2:\n{preprocess_text_2}"
+
+    @staticmethod
+    def show_word_movers_plot(text_1, text_2):
+        """
+        Show word movers matplotlib's plot.
+        :param text_1: First text
+        :param text_2: Second text
+        """
+        doc_1, _ = NLPService.get_textacy_doc(text_1)
+        doc_2, _ = NLPService.get_textacy_doc(text_2)
+
+        word_idxs = dict()
+        word_vecs = []
+        word_nams = []
+        nums_vecs = 0
+
+        concatenated = [extract.words(doc_1), extract.words(doc_2)]
+        for document in range(len(concatenated)):
+            for word in concatenated[document]:
+                if word.has_vector and word_idxs.setdefault(word.orth, nums_vecs) == nums_vecs:
+                    word_vecs.append(word.vector)
+                    word_nams.append({'word': str(word), 'class': document})
+                    nums_vecs += 1
+        distance_mat = pairwise_distances(word_vecs, metric="cosine").astype(np.double)
+        distance_mat /= distance_mat.max()
+
+        # Create DataFrame
+        w = [w.get('word') for w in word_nams]
+        c = [w.get('class') for w in word_nams]
+        df = pd.DataFrame(data=distance_mat, index=w, columns=w)
+
+        writer = pd.ExcelWriter('output_raw_sim.xlsx')
+        df.to_excel(writer, 'Sheet1')
+        writer.save()
+
+        mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+        pos = mds.fit_transform(df.values)
+
+        xvals = pos[:, 0]
+        yvals = pos[:, 1]
+
+        classes = c if c else [0] * len(xvals)
+        colors = NLPService.COLORING
+        values = list(zip(xvals, yvals, classes, df.columns))
+
+        for x, y, cls, name in values:
+            plt.scatter(x, y, c=colors[cls])
+            plt.text(x, y, name, fontsize=9)
+
+        # closest = find_closest_words(values)
+        closest = NLPService.find_closest_words(values, classes=classes, focused_class=0)
+        for close_points in closest:
+            x = [close_points[0][0], close_points[1][0]]
+            y = [close_points[0][1], close_points[1][1]]
+            plt.plot(x, y, 'k', alpha=0.5)
+        plt.show()
+
+    @staticmethod
+    def find_closest_words(coordinates, classes=None, focused_class=None):
+        if classes is not None and focused_class is not None:
+            closest = []
+            sources = []
+            targets = []
+            for i in range(len(coordinates)):
+                if classes[i] == focused_class:
+                    sources.append(coordinates[i])
+                else:
+                    targets.append(coordinates[i])
+
+            for s in sources:
+                dist = [np.linalg.norm(np.array([s[0], s[1]]) - np.array([t[0], t[1]])) for t in targets]
+                dist = np.array(dist)
+                if np.min(dist) == 0.0:
+                    idx = np.where(dist == np.partition(dist, 2)[2])[0]
+                else:
+                    idx = np.argmin(dist)
+                closest.append(((s[0], s[1]), (targets[idx][0], targets[idx][1])))
+            return closest
+        else:
+            x_y_coord = [np.array([c[0], c[1]]) for c in coordinates]
+            distances = pairwise_distances(x_y_coord, metric='euclidean').astype(np.double)
+            indices = [np.where(row == np.partition(row, 2)[2])[0] for row in distances]
+            closest = [(x_y_coord[int(i)], x_y_coord[int(indices[i])]) for i in range(len(indices))]
+            return closest
 
     # -----------------
     # Private methods

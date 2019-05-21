@@ -46,13 +46,21 @@ class WordMoversForm(QtWidgets.QMdiSubWindow):
         self.text_2_edit.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         main_layout.addWidget(self.text_2_edit)
 
+        buttons_layout = QtWidgets.QHBoxLayout()
+
         word_movers_analysis = QtWidgets.QPushButton("Podobnost textu", self)
         word_movers_analysis.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         word_movers_analysis.clicked.connect(self._on_word_movers_analysis)
-        main_layout.addWidget(word_movers_analysis)
+        buttons_layout.addWidget(word_movers_analysis)
+
+        show_word_movers_plot = QtWidgets.QPushButton("Graf podobností textu", self)
+        show_word_movers_plot.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
+        show_word_movers_plot.clicked.connect(self._on_show_word_movers_plot)
+        buttons_layout.addWidget(show_word_movers_plot)
 
         form_layout.addStretch()
         form_layout.addLayout(main_layout)
+        form_layout.addLayout(buttons_layout)
         form_layout.addStretch()
 
     def _on_word_movers_analysis(self):
@@ -65,10 +73,24 @@ class WordMoversForm(QtWidgets.QMdiSubWindow):
             return
 
         try:
-            word_movers, processed_text = self._nlp_service.get_textacy_word_movers(raw_text_1, raw_text_2)
+            word_movers, processed_text = self._nlp_service.get_word_movers(raw_text_1, raw_text_2)
             raw_text = f"Čistý text 1:\n{raw_text_1}\n\nČistý text 2:\n{raw_text_2}"
 
             self.word_movers_result_form = NLPResultForm(str(word_movers), raw_text, processed_text, "Podobnost textu")
             self.word_movers_result_form.show()
+        except Exception as ex:
+            self._error_label.setText(ex.__str__())
+
+    def _on_show_word_movers_plot(self):
+        self._error_label.setText("")
+
+        raw_text_1, raw_text_2 = self.text_1_edit.toPlainText(), self.text_2_edit.toPlainText()
+
+        if not (raw_text_1 and raw_text_2):
+            self._error_label.setText("Jeden/oba texty jsou prázdné.")
+            return
+
+        try:
+            self._nlp_service.show_word_movers_plot(raw_text_1, raw_text_2)
         except Exception as ex:
             self._error_label.setText(ex.__str__())
