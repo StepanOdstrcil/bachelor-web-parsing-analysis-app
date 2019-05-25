@@ -1,25 +1,18 @@
-# Basic libraries
-
 # App libraries
 from .nlp_result import *
 # Third-party libraries
 import spacy as s
-import gensim
 from spacy.lang.en import English
 import nltk
 from nltk.corpus import wordnet as wn
-import scattertext as st
 import textacy
 import textacy.keyterms
 from sklearn.metrics import pairwise_distances
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from pyemd import emd
 from sklearn.manifold import MDS
-import collections
-from nltk.stem.wordnet import WordNetLemmatizer
-from textacy.similarity import word_movers, extract, compat
+from textacy.similarity import word_movers, extract
 
 
 class NLPService:
@@ -72,19 +65,6 @@ class NLPService:
         return tuple(set([NamedEntity(entity.label_, entity.text)
                           for entity in spacy_doc.ents
                           if entity.label_ != "GPE"]))
-
-    def get_scatter_text_html(self):
-        """
-        Gets scatter text html used for visualization
-        :return: Html text used for visualisation
-        """
-        # spacy_nlp = s.load(self._WORD_MODEL_NAME)
-        # convention_df = st.SampleCorpora.ConventionData2012.get_data()
-        # corpus = st.CorpusFromPandas(convention_df, category_col='party', text_col='text', nlp=spacy_nlp).build()
-        # return st.produce_scattertext_explorer(corpus, category='democrat', category_name='Democratic',
-        #                                        not_category_name='Republican', width_in_pixels=1000,
-        #                                        metadata=convention_df['speaker'])
-        return "TODO"
 
     @staticmethod
     def get_textacy_doc(text):

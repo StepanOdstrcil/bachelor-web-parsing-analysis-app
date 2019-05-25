@@ -215,11 +215,6 @@ class MainForm(QtWidgets.QMainWindow):
         wa_text_summarization.clicked.connect(self._on_wa_text_summarization)
         web_analysis_layout.addWidget(wa_text_summarization)
 
-        # wa_scatter_text = QtWidgets.QPushButton("Scatter text", self)
-        # wa_scatter_text.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
-        # wa_scatter_text.clicked.connect(self._on_wa_scatter_text)
-        # web_analysis_layout.addWidget(wa_scatter_text)
-
         wa_textacy_button = QtWidgets.QPushButton("N Gramy", self)
         wa_textacy_button.setFont(QtGui.QFont("Courier New", 14, QtGui.QFont.Black))
         wa_textacy_button.clicked.connect(self._on_wa_textacy_n_grams)
@@ -417,15 +412,6 @@ class MainForm(QtWidgets.QMainWindow):
 
         self.text_summarization_form = NLPResultForm(summarization, self.result, processed_text, "Sumarizace textu")
         self.text_summarization_form.show()
-
-    # @catch_exception
-    # @reset_error_message
-    # @check_url_valid
-    # @check_url_changed
-    # def _on_wa_scatter_text(self):
-    #     self._nlp_service.text = self.result
-    #     html = self._nlp_service.get_scatter_text_html()
-    #     open("scatter_text_result.html", 'wb').write(html.encode('utf-8'))
 
     @catch_exception
     @reset_error_message

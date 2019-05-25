@@ -10,7 +10,7 @@ class WordMoversForm(QtWidgets.QMdiSubWindow):
 
         self._nlp_service = nlp_service
 
-        self.setWindowTitle("Word Movers Window")
+        self.setWindowTitle("Word Movers Analýza")
         self.setMinimumWidth(700)
 
         # Main widget and BoxLayout settings

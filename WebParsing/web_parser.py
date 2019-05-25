@@ -1,6 +1,5 @@
 # Basic libraries
 import re
-from urllib.parse import urljoin
 # App libraries
 from AdvancedLogging.logger import Logger
 # Third-party libraries

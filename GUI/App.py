@@ -13,6 +13,4 @@ class App(QtWidgets.QApplication):
     def build(self):
         self.main_form = MainForm()
 
-        # self.main_form.setup()
-
         sys.exit(self.exec_())
